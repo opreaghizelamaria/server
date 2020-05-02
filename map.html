@@ -26,10 +26,10 @@ type="text/javascript"></script>
     var map,marker,markers;
     console.log(document.referrer);
 
-    if(document.referrer!='http://192.168.0.109:3000/'){
-        alert("You don't have authorization to view this page!");
-        window.location = "http://192.168.0.109:3000/";       
-    }  
+//     if(document.referrer!='http://192.168.0.109:3000/'){
+//         alert("You don't have authorization to view this page!");
+//         window.location = "http://192.168.0.109:3000/";       
+//     }  
     var socket = io();
     socket.on('deleted',function(data){
          console.log("heeeo");
@@ -55,7 +55,7 @@ type="text/javascript"></script>
       }
       
     function getMarkers(){
-         var url='http://192.168.0.109:3000/Crashes';
+         var url='http://localhost:8080/Crashes';
 		 fetch(url).then(function(res){
 			Promise.all([res.status,res.json()]).then(([status,jsonData])=>{
 				console.log(jsonData[0]);
@@ -101,7 +101,7 @@ function solved(id){
         if(id==markers[i].getTitle())
             markers[i].setMap(null);
         }
-    var url='http://192.168.0.109:3000/Solved?id='+id;
+    var url='http://localhost:8080/Solved?id='+id;
     try{fetch(url).then(res=>res.json());
     }
     catch(err){console.log(err.message)}
