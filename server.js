@@ -16,16 +16,16 @@ app.use(function (req, res, next) {
 //server cassandra communication
 var cassandra = require("cassandra-driver");
 
-// var dbConfig = {
-//          contactPoints : ['127.0.0.1'],
-//          keyspace:'traffic_data',
-//          localDataCenter: 'datacenter1'
-//     };
 var dbConfig = {
-    contactPoints : ['35.245.184.207'],
-    keyspace:'traffic_data',
-    localDataCenter: 'datacenter1'
-};
+         contactPoints : ['127.0.0.1'],
+         keyspace:'traffic_data',
+         localDataCenter: 'datacenter1'
+    };
+// var dbConfig = {
+//     contactPoints : ['35.245.184.207'],
+//     keyspace:'traffic_data',
+//     localDataCenter: 'datacenter1'
+// };
 var connection = new cassandra.Client(dbConfig);
 
 connection.connect(function(err,result){
