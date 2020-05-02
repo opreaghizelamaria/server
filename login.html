@@ -69,7 +69,7 @@ $(document).ready(function(){
 		var pass=$("#PIN").val();
 		console.log(userid+"   "+pass);
 
-		var url='http://192.168.0.109:3000/UserWeb?UserId='+userid+'&pass='+pass;
+		var url='http://localhost:8080/UserWeb?UserId='+userid+'&pass='+pass;
         
 		fetch(url).then(function(res){
 			Promise.all([res.status,res.json()]).then(([status,jsonData])=>{
