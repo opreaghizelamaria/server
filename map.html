@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cashes</title>
+    <link rel="favicon" type="image/png" herf="img/favicon.png">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #map{
+            height: 1000px;
+            width: 99%;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<script src = "/socket.io/socket.io.js"></script>
+<script src="test.js?rndstr=<%= getRandomStr() %>"></script>
+<script type='text/javascript' src='http://code.jquery.com/jquery-1.9.1.js'></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpWU-6S6vdWkl-bYVas9wcSA-bkhciMDk&callback=initMap"
+type="text/javascript"></script>
+<script>
+    var map,marker,markers;
+    console.log(document.referrer);
+
+    if(document.referrer!='http://192.168.0.109:3000/'){
+        alert("You don't have authorization to view this page!");
+        window.location = "http://192.168.0.109:3000/";       
+    }  
+    var socket = io();
+    socket.on('deleted',function(data){
+         console.log("heeeo");
+        for(var i=0;i<markers.length;i++){
+            if(data.uuid==markers[i].getTitle())
+            markers[i].setMap(null);
+        }
+     })
+    socket.on('broadcast',function(data) {
+         var lng=parseFloat(data.longitude);
+         var lat=parseFloat(data.latitude);
+         var id=data.uuid;
+         addMarker(lat,lng,id);
+      });
+    function initMap(){    
+         markers=[];
+  
+         var location = { lat:23.342, lng: 34.546};
+         map=new google.maps.Map(document.getElementById("map"),
+         {zoom:2, center: location});
+         getMarkers();
+
+      }
+      
+    function getMarkers(){
+         var url='http://192.168.0.109:3000/Crashes';
+		 fetch(url).then(function(res){
+			Promise.all([res.status,res.json()]).then(([status,jsonData])=>{
+				console.log(jsonData[0]);
+                console.log(jsonData.length)
+                jsonData.forEach(element => { 
+                 console.log(element.longitude);
+
+                 var lng=parseFloat(element.latitude);
+                 var lat=parseFloat(element.longitude);
+                 var title=element.uuid;
+                            
+                 addMarker(lat,lng,title);
+                 });
+             });
+         });
+     }
+function makeInfoWindowListener (pMarker, pContent) {  
+    return function() {
+    pContent.open(map, pMarker);
+  };  
+}
+function addMarker(lat,lng,id){
+    marker = new google.maps.Marker({
+    position:{lat,lng},
+    map:map,
+    title:id
+    });
+    marker.addListener('click',function(){
+        });
+    var infowindow = new google.maps.InfoWindow({
+        content: '<p>Crash solved?</p>'+  '<button onclick="solved(\''+marker.getTitle()+'\')">Solved</button>'
+          
+        });
+    google.maps.event.addListener(
+        marker, 
+        'click', 
+        makeInfoWindowListener(marker, infowindow)
+    );
+    markers[markers.length]=marker;
+}
+function solved(id){
+    for(var i=0;i<markers.length;i++){
+        if(id==markers[i].getTitle())
+            markers[i].setMap(null);
+        }
+    var url='http://192.168.0.109:3000/Solved?id='+id;
+    try{fetch(url).then(res=>res.json());
+    }
+    catch(err){console.log(err.message)}
+    }        
+</script>
+
+</body>
+</html>
